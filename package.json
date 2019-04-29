@@ -1,26 +1,26 @@
 {
-  "name": "barco-pulse",
-  "version": "1.0.0",
-  "api_version": "1.0.0",
-  "keywords": [
-    "Pulse"
-  ],
-  "manufacturer": "Barco",
-  "product": "Pulse Projector",
-  "shortname": "pulse",
-  "description": "Barcos Pulse Platform",
-  "main": "pulse.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "William Viker <william@bitfocus.io>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bitfocus/companion-module-barco-pulse.git"
-  },
-  "bugs": {
-    "url": "https://github.com/bitfocus/companion-module-barco-pulse/issues"
-  },
-  "homepage": "https://github.com/bitfocus/companion-module-barco-pulse#readme"
+	"name": "barco-pulse",
+	"version": "1.0.1",
+	"api_version": "1.0.0",
+	"keywords": [
+		"Pulse"
+	],
+	"manufacturer": "Barco",
+	"product": "Pulse Projector",
+	"shortname": "pulse",
+	"description": "Barcos Pulse Platform",
+	"main": "pulse.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "William Viker <william@bitfocus.io>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-barco-pulse.git"
+	},
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-barco-pulse/issues"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-barco-pulse#readme"
 }

@@ -158,6 +158,10 @@ instance.prototype.init_tcp = function() {
 				console.log("system.gotoready():",err,"RES",res);
 			});
 
+			self.request("image.source.list", { }, function(err, res) {
+				console.log("image.source.list:",err,"RES",res);
+			});
+
 			self.request("property.get", { "property": "illumination.state" }, function(err, res) {
 				console.log("property.get():",err,"RES",res);
 			});
@@ -269,7 +273,8 @@ instance.prototype.request = function(method, params, cb) {
 		callback: cb
 	};
 	var line = '{"method":"'+method+'","id":"'+self.counter+'","params":'+JSON.stringify(params)+',"jsonrpc":"2.0"}';
-	self.socket.write(line)
+	self.socket.write(line);
+	console.log(line);
 	debug('SNED['+self.counter+']:', line);
 };
 
@@ -302,32 +307,126 @@ instance.prototype.destroy = function() {
 
 instance.prototype.actions = function(system) {
 	var self = this;
-	self.system.emit('instance_actions', self.id, {
-		'POWOFF': { label: 'Power on' },
-		'POWON': { label: 'Turn on' },
+
+	self.setActions({
+		'POWOFF': { label: 'Power off' },
+		'POWON': { label: 'Power on' },
 		'ILLOFF': { label: 'Illumination off' },
 		'ILLON': { label: 'Illumination on' },
-		'FACTORY': { label: 'Factory reset all' }
+		'OSD': {
+			label: 'OSD on',
+			options: [{
+				type: 'dropdown',
+				label: 'Show OSD?',
+				id: 'osd',
+				default: 'off',
+				choices: [
+					{id: 'off', label: 'OSD Off'},
+					{id: 'on', label: 'OSD On'}
+				]
+			}]
+		},
+		'input': {
+			label: 'Select input',
+			options: [{
+				type: 'dropdown',
+				label: 'input',
+				id: 'input',
+				default: 'HDMI',
+				choices: [
+					{id: 'L1 HDMI', label: 'HDMI'},
+					{id: 'L1 Displayport', label: 'Displayport'}
+				]
+			}]
+		},
+		'shutter': {
+			label: 'Shutter projector',
+			options: [{
+				type: 'dropdown',
+				label: 'shutter open/close',
+				id: 'shutter',
+				default: 'open',
+				choices: [
+					{id: 'open', label: 'Shutter open'},
+					{id: 'close', label: 'Shutter close'}
+				]
+			}]
+		},
+		'stealth': {
+			label: 'Stealth mode (LEDs)',
+			options: [{
+				type: 'dropdown',
+				label: 'Contolable leds on/of',
+				id: 'shutter',
+				default: 'on',
+				choices: [
+					{id: 'on', label: 'Stealth on'},
+					{id: 'off', label: 'Stealth off'}
+				]
+			}]
+		}
 	});
 }
 
 instance.prototype.action = function(action) {
 	var self = this;
-	var cmd = action.action;
+	var id = action.action;
+	var options = action.options;
 
 	var pj_command;
 	var pj_args = {};
 
-	// Power state
-	if (cmd == 'POWON') { pj_command = 'system.poweron'; }
-	else if (cmd == 'POWOFF') { pj_command = 'system.poweroff'; }
+	switch(id) {
 
-	// Illumination state
-	else if (cmd == 'ILLON') { pj_command = 'illumination.ignite'; }
-	else if (cmd == 'ILLOFF') { pj_command = 'illumination.extinguish'; }
+		case 'POWON':
+			 pj_command = 'system.poweron';
+		 break;
 
-	else if (cmd == 'FACTORY') { pj_command = 'system.resetall'; }
+		case 'POWOFF':
+			pj_command = 'system.poweroff';
+			break;
 
+		case 'ILLON':
+			pj_command = 'illumination.ignite';
+			break;
+
+		case 'ILLOFF':
+			pj_command = 'illumination.extinguish';
+			break;
+
+		case 'FACTORY':
+			pj_command = 'system.resetall';
+			break;
+
+		case 'input':
+			pj_command = 'property.set';
+			pj_args = { "property": "image.window.main.source", "value": options.input };
+			break;
+
+		case 'OSD':
+			pj_command = 'property.set';
+			if (options.osd == "on") {
+				 pj_args = { "property": "ui.osd", "value": true };
+			} else {
+				 pj_args = { "property": "ui.osd", "value": false };
+			}
+			break;
+
+		case 'shutter':
+			if(options.shutter == "close") {
+				pj_command = 'property.set';
+				pj_args = { "property": "optics.shutter.target", "value": "Closed" };
+			} else if (options.shutter == "open") {
+				pj_command = 'property.set';
+				pj_args = { "property": "optics.shutter.target", "value": "Open" };
+			}
+			break;
+
+		case 'stealth':
+			pj_command = 'property.set';
+			pj_args = { "property": "ui.stealthmode", "value": "On" };
+
+	}
 	if (pj_command !== undefined) {
 		self.request(pj_command, pj_args, function() {});
 	}
