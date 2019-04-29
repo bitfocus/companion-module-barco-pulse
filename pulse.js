@@ -66,7 +66,7 @@ instance.prototype.init_tcp = function() {
 
 
 			self.infointerval = setInterval(function() {
-
+/*
 				self.request('environment.getcontrolblocks', { "type": "Sensor", "valuetype": "Speed" }, function(err, res) {
 					debug('speed controlblocks:', err, "res", res);
 				});
@@ -102,7 +102,7 @@ instance.prototype.init_tcp = function() {
 				self.request('environment.getcontrolblocks', { "type": "Sensor", "valuetype": "Voltage" }, function(err, res) {
 					debug('voltage controlblocks:', err, "res", res);
 				});
-
+*/
 			}, 3000);
 
 
@@ -119,7 +119,7 @@ instance.prototype.init_tcp = function() {
 		/*	self.request("introspect",  { "object": "environment", "recursive": true }, function(err, res) {
 				console.log(JSON.stringify(res, null, 4));
 			});*/
-
+/*
 			self.request("signal.subscribe", { "signal": "modelupdated" }, function() {} );
 			var props = {
 				"property": [
@@ -161,7 +161,7 @@ instance.prototype.init_tcp = function() {
 			self.request("image.source.list", { }, function(err, res) {
 				console.log("image.source.list:",err,"RES",res);
 			});
-
+*/
 			self.request("property.get", { "property": "illumination.state" }, function(err, res) {
 				console.log("property.get():",err,"RES",res);
 			});
@@ -339,30 +339,61 @@ instance.prototype.actions = function(system) {
 				]
 			}]
 		},
+		'shift': {
+			label: 'Shift lens',
+			options: [{
+				type: 'dropdown',
+				label: 'Direction',
+				id: 'direction',
+				default: 'RC_SHIFT_UP',
+				choices: [
+					{id: 'RC_SHIFT_UP', label: 'up'},
+					{id: 'RC_SHIFT_DOWN', label: 'down'},
+					{id: 'RC_SHIFT_LEFT', label: 'left'},
+					{id: 'RC_SHIFT_RIGHT', label: 'right'}]
+			},{
+				type: 'dropdown',
+				label: 'press/release',
+				id: 'key',
+				choices: [
+					{id: 'press', label: 'press'},
+					{id: 'release', label: 'release'}]
+			}]
+		},
 		'shutter': {
 			label: 'Shutter projector',
 			options: [{
 				type: 'dropdown',
 				label: 'shutter open/close',
 				id: 'shutter',
-				default: 'open',
+				default: 'Open',
 				choices: [
-					{id: 'open', label: 'Shutter open'},
-					{id: 'close', label: 'Shutter close'}
-				]
+					{id: 'Open', label: 'Shutter open'},
+					{id: 'Closed', label: 'Shutter close'}]
+			}]
+		},
+		'testpattern': {
+			label: 'Testpattern on/off',
+			options: [{
+				type: 'dropdown',
+				label: 'on/off',
+				id: 'testpattern',
+				default: 'on',
+				choices: [
+					{id: 'on', label: 'Testpattern on'},
+					{id: 'off', label: 'Testpattern off'}]
 			}]
 		},
 		'stealth': {
 			label: 'Stealth mode (LEDs)',
 			options: [{
 				type: 'dropdown',
-				label: 'Contolable leds on/of',
-				id: 'shutter',
+				label: 'Controlable leds on/off',
+				id: 'stealth',
 				default: 'on',
 				choices: [
 					{id: 'on', label: 'Stealth on'},
-					{id: 'off', label: 'Stealth off'}
-				]
+					{id: 'off', label: 'Stealth off'}]
 			}]
 		}
 	});
@@ -413,18 +444,37 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'shutter':
-			if(options.shutter == "close") {
-				pj_command = 'property.set';
-				pj_args = { "property": "optics.shutter.target", "value": "Closed" };
-			} else if (options.shutter == "open") {
-				pj_command = 'property.set';
-				pj_args = { "property": "optics.shutter.target", "value": "Open" };
+			pj_command = 'property.set';
+			pj_args = { "property": "optics.shutter.target", "value": options.shutter };
+			break;
+
+		case 'testpattern':
+			pj_command = 'property.set';
+			if (options.testpattern == "on") {
+				 pj_args = { "property": "image.testpattern.show", "value": true };
+			} else {
+				 pj_args = { "property": "image.testpattern.show", "value": false };
+			}
+			break;
+
+		case 'shift':
+			if(options.key == "press") {
+				pj_command = 'keydispatcher.sendpressevent';
+				pj_args = { "key": options.direction };
+			} else if (options.key == "release") {
+				pj_command = 'keydispatcher.sendreleaseevent';
+				pj_args = { "key": options.direction };
 			}
 			break;
 
 		case 'stealth':
 			pj_command = 'property.set';
-			pj_args = { "property": "ui.stealthmode", "value": "On" };
+			if( options.stealth == "on") {
+				pj_args = { "property": "ui.stealthmode", "value": true };
+			} else {
+				pj_args = { "property": "ui.stealthmode", "value": false };
+			}
+			break;
 
 	}
 	if (pj_command !== undefined) {
