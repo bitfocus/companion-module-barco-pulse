@@ -6,15 +6,14 @@
 * **Ilumination** on/off
 * **Input selection** Currently HDMI / Displayport **Not tested**
 * **OSD** on/off
-* **Shutter** open/close
+* **Shutter** open/close/toggle
 * **Testpattern** on/off Select testpattern type first
-* **Lens Shift** 4 directions, create an press and release actions
-* **Stealth** on/off disable LED lights on projector
-* **Remote control** Menu, Back, Up, Left, Right, Down, Ok
+* **Zoom** in/out, set number of steps (default = 1)
+* **Focus** in/out
+* **Lens Shift** set number of steps (default = 1)
+* **Remote Lens Shift** 4 directions using remote key commands, create an press and release actions
+* **Stealth** on/off/toggle disable LED lights on projector
+* **Remote control** All remote buttons avalible
+* **Factory Reset** Factory Reset the device
 
-# Presets
-
-* Power
-* OSD
-* Shutter
-* Lens UP-RIGHT-DOWN-LEFT
+* **Preset avalible for all included commands!**

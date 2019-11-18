@@ -27,6 +27,7 @@ instance.prototype.init = function() {
 	var self = this;
 
 	debug = self.debug;
+//	debug = console.log;
 	log = self.log;
 
 	self.init_tcp();
@@ -46,7 +47,7 @@ instance.prototype.init_tcp = function() {
 	}
 
 	if (self.config.host) {
-		self.socket = new tcp(self.config.host, 9090);
+		self.socket = new tcp(self.config.host, self.config.port);
 
 		self.socket.on('status_change', function (status, message) {
 			self.status(status, message);
@@ -276,7 +277,7 @@ instance.prototype.request = function(method, params, cb) {
 	};
 	var line = '{"method":"'+method+'","id":"'+self.counter+'","params":'+JSON.stringify(params)+',"jsonrpc":"2.0"}';
 	self.socket.write(line);
-	console.log(line);
+	console.log('SEND Request: %s', line);
 	debug('SNED['+self.counter+']:', line);
 };
 
@@ -292,6 +293,14 @@ instance.prototype.config_fields = function () {
 			width: 6,
 			default: '192.168.1.100',
 			regex: self.REGEX_IP
+		},
+		{
+			type: 'textinput',
+			id: 'port',
+			label: 'Target Port (9090)',
+			default: '9090',
+			width: 5,
+			regex: self.REGEX_PORT
 		}
 	]
 };
@@ -307,6 +316,124 @@ instance.prototype.destroy = function() {
 	self.requests = {};
 };
 
+instance.prototype.LIST_OnOff = [
+	{id: 'true',	label: 'On'},
+	{id: 'false',	label: 'Off'}
+];
+
+instance.prototype.LIST_power = [
+	{ id: 'system.poweron',		label: 'Projektor ON' },
+	{ id: 'system.poweroff',	label: 'Projektor OFF' },
+];
+
+instance.prototype.LIST_illumination = [
+	{ id: 'illumination.extinguish',	label: 'Extinguish' },
+	{ id: 'illumination.ignite',			label: 'Illuminate' },
+];
+
+instance.prototype.LIST_input = [
+	{ id: 'L1 HDMI',				label: 'HDMI' },
+	{ id: 'L1 Displayport',	label: 'Displayport' },
+];
+
+instance.prototype.LIST_shutter = [
+	{id: 'Open', 		label: 'Shutter open'},
+	{id: 'Closed',	label: 'Shutter close'}
+];
+
+instance.prototype.LIST_lens_zoom = [
+	{id: 'optics.zoom.stepforward', 	label: 'Forward'},
+	{id: 'optics.zoom.stepreverse', 	label: 'Back'},
+];
+
+instance.prototype.LIST_lens_focus = [
+	{id: 'optics.focus.stepforward',	label: 'Forward'},
+	{id: 'optics.focus.stepreverse',	label: 'Back'},
+];
+
+instance.prototype.LIST_lens_shift = [
+	{id: 'optics.lensshift.vertical.stepforward', 	label: 'Up'},
+	{id: 'optics.lensshift.vertical.stepreverse', 	label: 'Down'},
+	{id: 'optics.lensshift.horizontal.stepforward',	label: 'Left'},
+	{id: 'optics.lensshift.horizontal.stepreverse',	label: 'Right'},
+];
+
+instance.prototype.LIST_lens_calibrate = [
+	{id: 'optics.zoom.calibrate', 									label: 'Calibrate Zoom'},
+	{id: 'optics.focus.calibrate', 									label: 'Calibrate Focus'},
+	{id: 'optics.lensshift.vertical.calibrate',			label: 'Calibrate Vertical'},
+	{id: 'optics.lensshift.horizontal.calibrate',		label: 'Calibrate Horizontal'},
+	{id: 'optics.shifttocenter',										label: 'Go To Center'},
+];
+
+instance.prototype.LIST_rc_shift = [
+	{id: 'RC_SHIFT_UP',			label: 'up'},
+	{id: 'RC_SHIFT_DOWN',		label: 'down'},
+	{id: 'RC_SHIFT_LEFT',		label: 'left'},
+	{id: 'RC_SHIFT_RIGHT',	label: 'right'}
+];
+
+instance.prototype.LIST_release = [
+	{id: 'keydispatcher.sendpressevent',		label: 'Press'},
+	{id: 'keydispatcher.sendreleaseevent',	label: 'Release'}
+];
+
+instance.prototype.LIST_rc_key = [
+	{id: 'RC_SHUTTER_OPEN',		label: 'Shutter Open'},
+	{id: 'RC_SHUTTER_CLOSE',	label: 'Shutter Close'},
+	{id: 'RC_POWER_ON',				label: 'Power ON'},
+	{id: 'RC_POWER_OFF',			label: 'Power OFF'},
+	{id: 'RC_OSD',						label: 'OSD'},
+	{id: 'RC_LCD',						label: 'LCD'},
+	{id: 'RC_PATTERN',				label: 'Pattern'},
+	{id: 'RC_RGB',						label: 'RGB'},
+	{id: 'RC_ZOOM_PLUS',			label: 'Zoom +'},
+	{id: 'RC_ZOOM_MINUS',			label: 'Zoom -'},
+	{id: 'RC_SHIFT_UP',				label: 'Lens Up'},
+	{id: 'RC_SHIFT_DOWN',			label: 'Lens Down'},
+	{id: 'RC_SHIFT_LEFT',			label: 'Lens Left'},
+	{id: 'RC_SHIFT_RIGHT',		label: 'Lens Right'},
+	{id: 'RC_FOCUS_PLUS',			label: 'Focus +'},
+	{id: 'RC_FOCUS_MINUS',		label: 'Focus -'},
+	{id: 'RC_MENU',						label: 'Menu'},
+	{id: 'RC_DEFAULT',				label: 'Default'},
+	{id: 'RC_BACK',						label: 'Back'},
+	{id: 'RC_UP',							label: 'Up'},
+	{id: 'RC_LEFT',						label: 'Left'},
+	{id: 'RC_OK',							label: 'Ok'},
+	{id: 'RC_RIGHT',					label: 'Right'},
+	{id: 'RC_DOWN',						label: 'Down'},
+	{id: 'RC_ADDRESS',				label: 'Address'},
+	{id: 'RC_INPUT',					label: 'Input'},
+	{id: 'RC_MACRO',					label: 'Macro'},
+	{id: 'RC_1',							label: '1'},
+	{id: 'RC_2',							label: '2'},
+	{id: 'RC_3',							label: '3'},
+	{id: 'RC_4',							label: '4'},
+	{id: 'RC_5',							label: '5'},
+	{id: 'RC_6',							label: '6'},
+	{id: 'RC_7',							label: '7'},
+	{id: 'RC_8',							label: '8'},
+	{id: 'RC_9',							label: '9'},
+	{id: 'RC_0',							label: '0'},
+	{id: 'RC_ASTERISK',				label: 'Asterisk'},
+	{id: 'RC_NUMBER',					label: 'Number'},
+	{id: 'KP_LEFT',						label: 'KP Left'},
+	{id: 'KP_UP',							label: 'KP Up'},
+	{id: 'KP_OK',							label: 'KP Ok'},
+	{id: 'KP_RIGHT',					label: 'KP Right'},
+	{id: 'KP_DOWN',						label: 'KP Down'},
+	{id: 'KP_MENU',						label: 'KP Menu'},
+	{id: 'KP_POWER',					label: 'KP Power'},
+	{id: 'KP_BACK',						label: 'KP Back'},
+	{id: 'KP_OSD',						label: 'KP OSD'},
+	{id: 'KP_LENS',						label: 'KP Lens'},
+	{id: 'KP_PATTERN',				label: 'KP Pattern'},
+	{id: 'KP_SHUTTER',				label: 'KP Shutter'},
+	{id: 'KP_INPUT',					label: 'KP Input'},
+	{id: 'KP_STANDBY',				label: 'KP Standby'},
+];
+
 instance.prototype.actions = function(system) {
 	var self = this;
 
@@ -316,12 +443,9 @@ instance.prototype.actions = function(system) {
 			options: [{
 				type: 'dropdown',
 				label: 'Power',
-				id: 'power',
-				default: 'on',
-				choices: [
-					{id: 'off', label: 'Projector off'},
-					{id: 'on', label: 'Projector on'}
-				]
+				id: 'p1',
+				default: 'system.poweron',
+				choices: self.LIST_power
 			}]
 		},
 		'illumination': {
@@ -329,25 +453,19 @@ instance.prototype.actions = function(system) {
 			options: [{
 				type: 'dropdown',
 				label: 'illumination',
-				id: 'illumination',
-				default: 'on',
-				choices: [
-					{id: 'off', label: 'Extinguish'},
-					{id: 'on', label: 'Illuminate'}
-				]
+				id: 'p1',
+				default: 'illumination.ignite',
+				choices: self.LIST_illumination
 			}]
 		},
-		'OSD': {
+		'osd': {
 			label: 'OSD on',
 			options: [{
 				type: 'dropdown',
 				label: 'Show OSD?',
-				id: 'osd',
-				default: 'off',
-				choices: [
-					{id: 'off', label: 'OSD Off'},
-					{id: 'on', label: 'OSD On'}
-				]
+				id: 'p1',
+				default: 'true',
+				choices: self.LIST_OnOff
 			}]
 		},
 		'input': {
@@ -355,33 +473,9 @@ instance.prototype.actions = function(system) {
 			options: [{
 				type: 'dropdown',
 				label: 'input',
-				id: 'input',
-				default: 'HDMI',
-				choices: [
-					{id: 'L1 HDMI', label: 'HDMI'},
-					{id: 'L1 Displayport', label: 'Displayport'}
-				]
-			}]
-		},
-		'shift': {
-			label: 'Shift lens',
-			options: [{
-				type: 'dropdown',
-				label: 'Direction',
-				id: 'direction',
-				default: 'RC_SHIFT_UP',
-				choices: [
-					{id: 'RC_SHIFT_UP', label: 'up'},
-					{id: 'RC_SHIFT_DOWN', label: 'down'},
-					{id: 'RC_SHIFT_LEFT', label: 'left'},
-					{id: 'RC_SHIFT_RIGHT', label: 'right'}]
-			},{
-				type: 'dropdown',
-				label: 'press/release',
-				id: 'pressRelease',
-				choices: [
-					{id: 'press', label: 'press'},
-					{id: 'release', label: 'release'}]
+				id: 'p1',
+				default: 'L1 HDMI',
+				choices: self.LIST_input
 			}]
 		},
 		'shutter': {
@@ -389,23 +483,22 @@ instance.prototype.actions = function(system) {
 			options: [{
 				type: 'dropdown',
 				label: 'shutter open/close',
-				id: 'shutter',
+				id: 'p1',
 				default: 'Open',
-				choices: [
-					{id: 'Open', label: 'Shutter open'},
-					{id: 'Closed', label: 'Shutter close'}]
+				choices: self.LIST_shutter
 			}]
+		},
+		'shutter_toggle': {
+			label: 'Shutter projector (Toggle)',
 		},
 		'testpattern': {
 			label: 'Testpattern on/off',
 			options: [{
 				type: 'dropdown',
 				label: 'on/off',
-				id: 'testpattern',
+				id: 'p1',
 				default: 'on',
-				choices: [
-					{id: 'on', label: 'Testpattern on'},
-					{id: 'off', label: 'Testpattern off'}]
+				choices: self.LIST_OnOff
 			}]
 		},
 		'stealth': {
@@ -413,29 +506,110 @@ instance.prototype.actions = function(system) {
 			options: [{
 				type: 'dropdown',
 				label: 'Controlable leds on/off',
-				id: 'stealth',
+				id: 'p1',
 				default: 'on',
-				choices: [
-					{id: 'on', label: 'Stealth on'},
-					{id: 'off', label: 'Stealth off'}]
+				choices: self.LIST_OnOff
+			}]
+		},
+		'stealth_toggle': {
+			label: 'Stealth mode (Toggle)',
+		},
+		'lens_zoom': {
+			label: 'Zoom lens',
+			options: [{
+				type: 'dropdown',
+				label: 'Direction',
+				id: 'p1',
+				default: 'optics.zoom.stepforward',
+				choices: self.LIST_lens_zoom
+			},{
+				type: 'number',
+				id: 'p2',
+				label: 'Steps (1-100)',
+				min: 0,
+				max: 100,
+				default: 1,
+				required: true,
+				range: false,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+		'lens_focus': {
+			label: 'Focus lens',
+			options: [{
+				type: 'dropdown',
+				label: 'Direction',
+				id: 'p1',
+				default: 'optics.focus.stepforward',
+				choices: self.LIST_lens_focus
+			},{
+				type: 'number',
+				id: 'p2',
+				label: 'Steps (1-100)',
+				min: 0,
+				max: 100,
+				default: 1,
+				required: true,
+				range: false,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+		'lens_shift': {
+			label: 'Shift lens',
+			options: [{
+				type: 'dropdown',
+				label: 'Direction',
+				id: 'p1',
+				default: 'optics.lensshift.vertical.stepforward',
+				choices: self.LIST_lens_shift
+			},{
+				type: 'number',
+				id: 'p2',
+				label: 'Steps (1-100)',
+				min: 0,
+				max: 100,
+				default: 1,
+				required: true,
+				range: false,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+		'lens_calibrate': {
+			label: 'Calibrate lens',
+			options: [{
+				type: 'dropdown',
+				label: 'Type',
+				id: 'p1',
+				default: 'optics.zoom.calibrate',
+				choices: self.LIST_lens_calibrate
+			}]
+		},
+		'rc_shift': {
+			label: 'Remote Shift lens',
+			options: [{
+				type: 'dropdown',
+				label: 'Direction',
+				id: 'p1',
+				default: 'RC_SHIFT_UP',
+				choices: self.LIST_rc_shift
+			},{
+				type: 'dropdown',
+				label: 'press/release',
+				id: 'p2',
+				choices: self.LIST_release
 			}]
 		},
 		'remoteKey': {
 			label: 'Send remote button',
 			options: [{
-				type: 'dropdown',
+				type: 'p1',
 				label: 'Button from remote controller',
 				id: 'key',
-				choices: [
-					{id: 'RC_MENU', label: 'Menu'},
-					{id: 'RC_BACK', label: 'Back'},
-					{id: 'RC_UP', label: 'Up'},
-					{id: 'RC_LEFT', label: 'Left'},
-					{id: 'RC_OK', label: 'Ok'},
-					{id: 'RC_RIGHT', label: 'Right'},
-					{id: 'RC_DOWN', label: 'Down'}
-				]
+				choices: self.LIST_rc_key
 			}]
+		},
+		'factory': {
+			label: 'Reset to factory defaults',
 		}
 	});
 }
@@ -443,7 +617,7 @@ instance.prototype.actions = function(system) {
 instance.prototype.action = function(action) {
 	var self = this;
 	var id = action.action;
-	var options = action.options;
+	var opt = action.options;
 
 	var pj_command;
 	var pj_args = {};
@@ -451,77 +625,78 @@ instance.prototype.action = function(action) {
 	switch(id) {
 
 		case 'power':
-			if (options.power == 'on') {
-				pj_command = 'system.poweron';
-			} else if (options.power == 'off') {
-				pj_command = 'system.poweroff';
-			}
+			pj_command = opt.p1;
 			break;
 
 		case 'illumination':
-			if (options.illumination == 'on') {
-				pj_command = 'illumination.ignite';
-			} else if (options.illumination == 'off') {
-				pj_command = 'illumination.extinguish';
-			}
+			pj_command = opt.p1;
 			break;
 
-		case 'FACTORY':
-			pj_command = 'system.resetall';
+		case 'osd':
+			pj_command = 'property.set';
+			pj_args = { "property": "ui.osd", "value": opt.p1};
 			break;
 
 		case 'input':
 			pj_command = 'property.set';
-			pj_args = { "property": "image.window.main.source", "value": options.input };
+			pj_args = { "property": "image.window.main.source", "value": opt.p1 };
 			break;
-
-		case 'OSD':
-			pj_command = 'property.set';
-			if (options.osd == "on") {
-				 pj_args = { "property": "ui.osd", "value": true };
-			} else {
-				 pj_args = { "property": "ui.osd", "value": false };
-			}
-			break;
-
+	
 		case 'shutter':
 			pj_command = 'property.set';
-			pj_args = { "property": "optics.shutter.target", "value": options.shutter };
+			pj_args = { "property": "optics.shutter.target", "value": opt.p1 };
 			break;
 
+		case 'shutter_toggle':
+			pj_command = 'optics.shutter.toggle';
+			break;
+	
 		case 'testpattern':
 			pj_command = 'property.set';
-			if (options.testpattern == "on") {
-				 pj_args = { "property": "image.testpattern.show", "value": true };
-			} else {
-				 pj_args = { "property": "image.testpattern.show", "value": false };
-			}
-			break;
-
-		case 'shift':
-			if(options.pressRelease == "press") {
-				pj_command = 'keydispatcher.sendpressevent';
-				pj_args = { "key": options.direction };
-			} else if (options.pressRelease == "release") {
-				pj_command = 'keydispatcher.sendreleaseevent';
-				pj_args = { "key": options.direction };
-			}
+			pj_args = { "property": "image.testpattern.show", "value": opt.p1 };
 			break;
 
 		case 'stealth':
 			pj_command = 'property.set';
-			if( options.stealth == "on") {
-				pj_args = { "property": "ui.stealthmode", "value": true };
-			} else {
-				pj_args = { "property": "ui.stealthmode", "value": false };
-			}
+			pj_args = { "property": "ui.stealthmode", "value": opt.p1 };
 			break;
 
+		case 'stealth_toggle':
+			pj_command = 'ui.togglestealthmode';
+			break;
+
+		case 'lens_zoom':
+			pj_command = opt.p1;
+			pj_args = { "steps": opt.p2 };
+			break;
+
+		case 'lens_focus':
+			pj_command = opt.p1;
+			pj_args = { "steps": opt.p2 };
+			break;
+
+		case 'lens_shift':
+			pj_command = opt.p1;
+			pj_args = { "steps": opt.p2 };
+			break;
+
+		case 'lens_calibrate':
+			pj_command = opt.p1;
+			break;
+
+		case 'rc_shift':
+			pj_command = opt.p2;
+			pj_args = { "key": opt.p1 };
+			break;
+	
 		case 'remoteKey':
 				pj_command = 'keydispatcher.sendclickevent';
-				pj_args = { "key": options.key };
+				pj_args = { "key": opt.p1 };
 			break;
 
+		case 'factory':
+			pj_command = 'system.resetall';
+			break;
 	}
 	if (pj_command !== undefined) {
 		self.request(pj_command, pj_args, function() {});
@@ -533,281 +708,390 @@ instance.prototype.initPresets = function (updates) {
 	var self = this;
 	var presets = [];
 
+	// Shutter Open / Close
+	for (var i in self.LIST_shutter) {
+		presets.push({
+			category: 'Lens Control',
+			label: self.LIST_shutter[i].label,
+			bank: {
+				style: 'text',
+				text: self.LIST_shutter[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'shutter',
+					options: {
+						p1: self.LIST_shutter[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Shutter Toggle
 	presets.push({
-		category: 'Lens',
+		category: 'Lens Control',
+		label: 'Shutter Toggle',
 		bank: {
 			style: 'text',
-			text: 'Shutter close',
+			text: 'Shutter Toggle',
 			size: '14',
 			color: self.rgb(0,0,0),
 			bgcolor: self.rgb(235,235,235)
 		},
 		actions: [
 			{
-				action: 'shutter',
-				options: {
-					shutter: 'Closed'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Lens',
-		bank: {
-			style: 'text',
-			text: 'Shutter open',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'shutter',
-				options: {
-					shutter: 'Open'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Lens',
-		bank: {
-			style: 'text',
-			text: 'Shift UP',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_UP',
-					pressRelease: 'press'
-				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_UP',
-					pressRelease: 'release'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Lens',
-		bank: {
-			style: 'text',
-			text: 'Shift RIGHT',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_RIGHT',
-					pressRelease: 'press'
-				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_RIGHT',
-					pressRelease: 'release'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Lens',
-		bank: {
-			style: 'text',
-			text: 'Shift DOWN',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_DOWN',
-					pressRelease: 'press'
-				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_DOWN',
-					pressRelease: 'release'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Lens',
-		bank: {
-			style: 'text',
-			text: 'Shift LEFT',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_LEFT',
-					pressRelease: 'press'
-				}
-			}
-		],
-		release_actions: [
-			{
-				action: 'shift',
-				options: {
-					direction: 'RC_SHIFT_LEFT',
-					pressRelease: 'release'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Menu',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_MENU'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Up',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_UP'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Left',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_LEFT'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Down',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_DOWN'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Right',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_RIGHT'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Ok',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_OK'
-				}
-			}
-		]
-	})
-	presets.push({
-		category: 'Remote',
-		bank: {
-			style: 'text',
-			text: 'Back',
-			size: '14',
-			color: self.rgb(0,0,0),
-			bgcolor: self.rgb(235,235,235)
-		},
-		actions: [
-			{
-				action: 'remoteKey',
-				options: {
-					key: 'RC_BACK'
-				}
+				action: 'shutter_toggle',
 			}
 		]
 	})
 
+	// Lens Zoom
+	for (var i in self.LIST_lens_zoom) {
+		presets.push({
+			category: 'Lens Control',
+			label: 'Lens Zoom ' + self.LIST_lens_zoom[i].label,
+			bank: {
+				style: 'text',
+				text: 'Zoom ' + self.LIST_lens_zoom[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'lens_zoom',
+					options: {
+						p1: self.LIST_lens_zoom[i].id,
+						p2: 1
+					}
+				}
+			]
+		})
+	}
+
+	// Lens Focus
+	for (var i in self.LIST_lens_focus) {
+		presets.push({
+			category: 'Lens Control',
+			label: 'Lens Focus ' + self.LIST_lens_focus[i].label,
+			bank: {
+				style: 'text',
+				text: 'Focus ' + self.LIST_lens_focus[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'lens_focus',
+					options: {
+						p1: self.LIST_lens_focus[i].id,
+						p2: 1
+					}
+				}
+			]
+		})
+	}
+
+	// Lens Shift
+	for (var i in self.LIST_lens_shift) {
+		presets.push({
+			category: 'Lens Control',
+			label: 'Lens Shift ' + self.LIST_lens_shift[i].label,
+			bank: {
+				style: 'text',
+				text: 'Shift ' + self.LIST_lens_shift[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'lens_shift',
+					options: {
+						p1: self.LIST_lens_shift[i].id,
+						p2: 1
+					}
+				}
+			]
+		})
+	}
+
+	// Lens Calibrate
+	for (var i in self.LIST_lens_calibrate) {
+		presets.push({
+			category: 'Lens Control',
+			label: self.LIST_lens_calibrate[i].label,
+			bank: {
+				style: 'text',
+				text: self.LIST_lens_calibrate[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'lens_calibrate',
+					options: {
+						p1: self.LIST_lens_calibrate[i].id,
+					}
+				}
+			]
+		})
+	}
+
+	// Remote Lens Shift
+	for (var i in self.LIST_rc_shift) {
+		presets.push({
+			category: 'Remote Lens',
+			label: 'Remote Lense Shift ' + self.LIST_rc_shift[i].label,
+			bank: {
+				style: 'text',
+				text: 'Remote Shift ' + self.LIST_rc_shift[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'rc_shift',
+					options: {
+						p1: self.LIST_rc_shift[i].id,
+						p2: 'Press'
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'rc_shift',
+					options: {
+						p1: self.LIST_rc_shift[i].id,
+						p2: 'Release'
+					}
+				}
+			]
+		})
+	}
+
+	// Remote Key Press
+	for (var i in self.LIST_rc_key) {
+		presets.push({
+			category: 'Remote',
+			label: 'Remote ' + self.LIST_rc_key[i].label,
+			bank: {
+				style: 'text',
+				text: 'Remote ' + self.LIST_rc_key[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'remoteKey',
+					options: {
+						p1: self.LIST_rc_key[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Power ON / OFF
+	for (var i in self.LIST_power) {
+		presets.push({
+			category: 'System',
+			label: self.LIST_power[i].label,
+			bank: {
+				style: 'text',
+				text: self.LIST_power[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'power',
+					options: {
+						p1: self.LIST_power[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Shutter Open / Close
+	for (var i in self.LIST_shutter) {
+		presets.push({
+			category: 'System',
+			label: self.LIST_shutter[i].label,
+			bank: {
+				style: 'text',
+				text: self.LIST_shutter[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'shutter',
+					options: {
+						p1: self.LIST_shutter[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Shutter Toggle
+	presets.push({
+		category: 'System',
+		label: 'Shutter Toggle',
+		bank: {
+			style: 'text',
+			text: 'Shutter Toggle',
+			size: '14',
+			color: self.rgb(0,0,0),
+			bgcolor: self.rgb(235,235,235)
+		},
+		actions: [
+			{
+				action: 'shutter_toggle',
+			}
+		]
+	})
+
+	// Illumination
+	for (var i in self.LIST_illumination) {
+		presets.push({
+			category: 'System',
+			label: self.LIST_illumination[i].label,
+			bank: {
+				style: 'text',
+				text: self.LIST_illumination[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'illumination',
+					options: {
+						p1: self.LIST_illumination[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// OSD ON / OFF
+	for (var i in self.LIST_OnOff) {
+		presets.push({
+			category: 'System',
+			label: 'OSD ' + self.LIST_OnOff[i].label,
+			bank: {
+				style: 'text',
+				text: 'OSD ' + self.LIST_OnOff[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						p1: self.LIST_OnOff[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Testpattern ON / OFF
+	for (var i in self.LIST_OnOff) {
+		presets.push({
+			category: 'System',
+			label: 'Testpattern ' + self.LIST_OnOff[i].label,
+			bank: {
+				style: 'text',
+				text: 'TP ' + self.LIST_OnOff[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'testpattern',
+					options: {
+						p1: self.LIST_OnOff[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Stealth Mode ON / OFF
+	for (var i in self.LIST_OnOff) {
+		presets.push({
+			category: 'System',
+			label: 'Stealth ' + self.LIST_OnOff[i].label,
+			bank: {
+				style: 'text',
+				text: 'Stealth ' + self.LIST_OnOff[i].label,
+				size: '14',
+				color: self.rgb(0,0,0),
+				bgcolor: self.rgb(235,235,235)
+			},
+			actions: [
+				{
+					action: 'stealth',
+					options: {
+						p1: self.LIST_OnOff[i].id
+					}
+				}
+			]
+		})
+	}
+
+	// Stealth Toggle
+	presets.push({
+		category: 'System',
+		label: 'Stealth Mode Toggle',
+		bank: {
+			style: 'text',
+			text: 'Stealth Toggle',
+			size: '14',
+			color: self.rgb(0,0,0),
+			bgcolor: self.rgb(235,235,235)
+		},
+		actions: [
+			{
+				action: 'Stealth_toggle',
+			}
+		]
+	})
+	
+	// Factory Reset
+	presets.push({
+		category: 'System',
+		label: 'Factory Reset',
+		bank: {
+			style: 'text',
+			text: 'Factory Reset',
+			size: '14',
+			color: self.rgb(0,0,0),
+			bgcolor: self.rgb(235,235,235)
+		},
+		actions: [
+			{
+				action: 'factory',
+			}
+		]
+	})
+				
 	self.setPresetDefinitions(presets);
 };
 
