@@ -599,6 +599,63 @@ instance.prototype.actions = function(system) {
 				choices: self.LIST_release
 			}]
 		},
+	
+		'optics_zoom_target': {
+			label: 'Zoom target',
+			options: [{
+				type: 'number',
+				id: 'p1',
+				label: 'Zoom target value (0-65535)',
+				min: 0,
+				max: 65535,
+				default: 0,
+				required: true,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+
+		'optics_focus_target': {
+			label: 'Focus target',
+			options: [{
+				type: 'number',
+				id: 'p1',
+				label: 'Focus target value (0-65535)',
+				min: 0,
+				max: 65535,
+				default: 0,
+				required: true,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+		
+		'optics_lensshift_vertical_target': {
+			label: 'Vertical lens shift target',
+			options: [{
+				type: 'number',
+				id: 'p1',
+				label: 'Vertical lens shift target value (0-65535)',
+				min: 0,
+				max: 65535,
+				default: 0,
+				required: true,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+
+		'optics_lensshift_horizontal_target': {
+			label: 'Horizontal lens shift target',
+			options: [{
+				type: 'number',
+				id: 'p1',
+				label: 'Horizontal lens shift target value (0-65535)',
+				min: 0,
+				max: 65535,
+				default: 0,
+				required: true,
+				regex: self.REGEX_NUMBER
+			}]
+		},
+
 		'remoteKey': {
 			label: 'Send remote button',
 			options: [{
@@ -689,6 +746,26 @@ instance.prototype.action = function(action) {
 			pj_args = { "key": opt.p1 };
 			break;
 	
+		case 'optics_zoom_target':
+			pj_command = 'property.set';
+			pj_args = { "property": "optics.zoom.target", "value": opt.p1 };
+			break;
+
+		case 'optics_focus_target':
+			pj_command = 'property.set';
+			pj_args = { "property": "optics.focus.target", "value": opt.p1 };
+			break;
+
+		case 'optics_lensshift_vertical_target':
+			pj_command = 'property.set';
+			pj_args = { "property": "optics.lensshift.vertical.target", "value": opt.p1 };
+			break;
+
+		case 'optics_lensshift_horizontal_target':
+			pj_command = 'property.set';
+			pj_args = { "property": "optics.lensshift.horizontal.target", "value": opt.p1 };
+			break;
+
 		case 'remoteKey':
 				pj_command = 'keydispatcher.sendclickevent';
 				pj_args = { "key": opt.p1 };
