@@ -278,7 +278,7 @@ instance.prototype.request = function(method, params, cb) {
 	var line = '{"method":"'+method+'","id":"'+self.counter+'","params":'+JSON.stringify(params)+',"jsonrpc":"2.0"}';
 	self.socket.write(line);
 	console.log('SEND Request: %s', line);
-	debug('SNED['+self.counter+']:', line);
+	debug('SEND['+self.counter+']:', line);
 };
 
 // Return config fields for web config
@@ -322,8 +322,8 @@ instance.prototype.LIST_OnOff = [
 ];
 
 instance.prototype.LIST_power = [
-	{ id: 'system.poweron',		label: 'Projektor ON' },
-	{ id: 'system.poweroff',	label: 'Projektor OFF' },
+	{ id: 'system.poweron',		label: 'Projector ON' },
+	{ id: 'system.poweroff',	label: 'Projector OFF' },
 ];
 
 instance.prototype.LIST_illumination = [
@@ -440,13 +440,27 @@ instance.prototype.actions = function(system) {
 	self.setActions({
 		'power': {
 			label: 'Power',
-			options: [{
-				type: 'dropdown',
-				label: 'Power',
-				id: 'p1',
-				default: 'system.poweron',
-				choices: self.LIST_power
-			}]
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Power',
+					id: 'p1',
+					default: 'system.poweron',
+					choices: self.LIST_power
+				},
+				{
+					type: 'checkbox',
+					label: 'Block Standby Mode',
+					id: 'p2',
+					default: true,
+				},
+				{
+					type: 'checkbox',
+					label: 'Block Eco Mode',
+					id: 'p3',
+					default: true,
+				}
+		]
 		},
 		'illumination': {
 			label: 'Illumination',
@@ -682,7 +696,39 @@ instance.prototype.action = function(action) {
 	switch(id) {
 
 		case 'power':
+
 			pj_command = opt.p1;
+
+			if (opt.p1 == 'system.poweroff') {
+				if(opt.p2 == true) {
+
+					self.request('property.get', {"property": "system.state"}, (err, res) => {
+	
+						debug('Current Power State: ', res);
+	
+						if (res == 'ready') {
+							debug('Standby mode blocked. Aborting.')
+							pj_command = null;
+							return;
+						};
+					});
+					
+				} else if (opt.p3 == true) {
+					self.request('property.get', {"property": "system.state"}, (err, res) => {
+	
+						debug('Current Power State: ', res);
+	
+						if (res == 'standby') {
+							debug('Eco mode blocked. Aborting.')
+							pj_command = null;
+							return;
+						};
+					});
+				} else {
+					pj_command = opt.p1;
+				}
+			}
+
 			break;
 
 		case 'illumination':
@@ -776,6 +822,7 @@ instance.prototype.action = function(action) {
 			break;
 	}
 	if (pj_command !== undefined) {
+		debug('Sending Command.');
 		self.request(pj_command, pj_args, function() {});
 	}
 
