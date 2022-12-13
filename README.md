@@ -13,3 +13,6 @@ See HELP.md and LICENSE
 * Some rewrite - more scalable, preparing for feedback
 * Added lens movement, zoom, focus, more remote keys and more
 * Added presets for new commands
+
+**V1.1.4**
+* Added the ability to block Standby and Eco modes
