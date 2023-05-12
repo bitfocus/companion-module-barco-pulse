@@ -1,6 +1,6 @@
 ## Barco Pulse module
 
-## Currently support the following functions;
+## Currently support the following functions:
 
 * **Power state** on/off
 * **Ilumination** on/off
@@ -16,4 +16,4 @@
 * **Remote control** All remote buttons avalible
 * **Factory Reset** Factory Reset the device
 
-* **Preset avalible for all included commands!**
+* **Presets availible for all included commands!**
