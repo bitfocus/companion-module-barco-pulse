@@ -178,6 +178,12 @@ module.exports = {
 			self.checkFeedbacks();
 		});
 
+		self.sendCommand('property.get', {"property": "optics.shutter.position"}, (err, res) => {	
+			self.INFO['shutter_position'] = res;
+			self.checkVariables();
+			self.checkFeedbacks();
+		});
+
 		self.sendCommand("property.get", { "property": "illumination.state" }, function(err, res) {
 			console.log("property.get():",err,"RES",res);
 			self.checkVariables();
