@@ -51,7 +51,7 @@ module.exports = {
 		feedbacks.shutterState = {
 			type: 'boolean',
 			name: 'Shutter State',
-			description: 'Indicate if Projector is in X State',
+			description: 'Indicate if Projector Shutter is in X State',
 			defaultStyle: {
 				color: foregroundColor,
 				bgcolor: backgroundColorRed,
@@ -61,10 +61,10 @@ module.exports = {
 					type: 'dropdown',
 					label: 'Indicate in X State',
 					id: 'option',
-					default: 'open',
+					default: 'Open',
 					choices: [
-						{ id: 'open', label: 'Open' },
-						{ id: 'closed', label: 'Closed' }
+						{ id: 'Open', label: 'Open' },
+						{ id: 'Closed', label: 'Closed' }
 					]
 				}
 			],
@@ -82,6 +82,7 @@ module.exports = {
 				return false
 			}
 		}
+		
 		self.setFeedbackDefinitions(feedbacks);
 	}
 }
