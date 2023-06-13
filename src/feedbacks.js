@@ -48,6 +48,41 @@ module.exports = {
 			}
 		}
 
+		feedbacks.shutterState = {
+			type: 'boolean',
+			name: 'Shutter State',
+			description: 'Indicate if Projector Shutter is in X State',
+			defaultStyle: {
+				color: foregroundColor,
+				bgcolor: backgroundColorRed,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Indicate in X State',
+					id: 'option',
+					default: 'Open',
+					choices: [
+						{ id: 'Open', label: 'Open' },
+						{ id: 'Closed', label: 'Closed' }
+					]
+				}
+			],
+			callback: async function (feedback) {
+				let opt = feedback.options;
+
+				if (self.INFO && self.INFO.shutter_position !== undefined) {
+					let shutter_position = self.INFO.shutter_position;
+				
+					if (shutter_position == opt.option) {
+						return true;
+					}
+				}
+
+				return false
+			}
+		}
+		
 		self.setFeedbackDefinitions(feedbacks);
 	}
 }

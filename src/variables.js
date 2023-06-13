@@ -5,6 +5,7 @@ module.exports = {
 
 		variables.push({ variableId: 'power_state', name: 'Power State' });
 		//variables.push({ variableId: 'illumination_state', name: 'Illumination State' });
+		variables.push({ variableId: 'shutter_position', name: 'Shutter State' });
 
 		variables.push({ variableId: 'identification_family', name: 'Identification Family' });
 		variables.push({ variableId: 'identification', name: 'Identification' });
@@ -26,6 +27,10 @@ module.exports = {
 
 			if ('illumination_state' in self.INFO) {
 				//variableObj['illumination_state'] = self.INFO['illumination_state'];
+			}
+			
+			if ('shutter_position' in self.INFO) {
+				variableObj['shutter_position'] = self.INFO['shutter_position'];
 			}
 
 			if ('identification' in self.INFO) {
