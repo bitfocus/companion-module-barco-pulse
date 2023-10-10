@@ -290,6 +290,32 @@ module.exports = {
 			}
 		}
 
+/* please add */
+		actions.laser_power = {
+			name: 'Laser power',
+			options: [
+				{
+					type: 'number',
+					id: 'p1',
+					label: 'Laser Power [Steps (15-100)]',
+					min: 15,
+					max: 100,
+					default: 100,
+					required: true,
+					range: false,
+					regex: self.REGEX_NUMBER
+				}
+			],
+			callback: async function (action) {
+				let opt = action.options;
+				let pj_command = 'property.set';
+				let pj_args = { "property": "illumination.sources.laser.power", "value": opt.p1};
+				self.sendCommand(pj_command, pj_args, function() {});
+				
+			}
+		}
+
+
 		actions.lens_calibrate = {
 			name: 'Calibrate lens',
 			options: [

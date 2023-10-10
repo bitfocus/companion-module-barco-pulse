@@ -189,5 +189,12 @@ module.exports = {
 			self.checkVariables();
 			self.checkFeedbacks();
 		});
+		
+		/* Laser Power */
+		self.sendCommand("property.get", { "property": "illumination.sources.laser.power" }, function(err, res) {
+			self.INFO['illumination_value'] = res;
+			self.checkVariables();
+			self.checkFeedbacks();
+		});
 	}
 }
