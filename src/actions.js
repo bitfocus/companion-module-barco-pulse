@@ -478,6 +478,25 @@ module.exports = {
 			}
 		}
 
+		actions.activateProfile = {
+			name: 'Activate Profile',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Profile Name',
+					id: 'profile',
+					default: '',
+					useVariables: true,
+				}
+			],
+			callback: async function (action) {
+				let opt = action.options;
+				let pj_command = 'profile.activateprofile';
+				let pj_args = await self.parseVariablesInString(opt.profile);
+				self.sendCommand(pj_command, pj_args, function() {});
+			}
+		}
+
 		self.setActionDefinitions(actions);
 	}
 }

@@ -497,6 +497,33 @@ module.exports = {
 			feedbacks: []
 		})
 
+		// Activate Profile
+		presets.push({
+			type: 'button',
+			category: 'System',
+			name: 'Activate Profile',
+			style: {
+				text: 'Activate Profile',
+				size: '14',
+				color: combineRgb(0,0,0),
+				bgcolor: combineRgb(235,235,235)
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'activateProfile',
+							options: {
+								profile: ''
+							}
+						}
+					],
+					up: []
+				}
+			],
+			feedbacks: []
+		})
+
 		self.setPresetDefinitions(presets);
 	}
 }
