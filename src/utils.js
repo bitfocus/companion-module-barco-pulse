@@ -185,7 +185,25 @@ module.exports = {
 		});
 
 		self.sendCommand("property.get", { "property": "illumination.state" }, function(err, res) {
-			console.log("property.get():",err,"RES",res);
+			self.INFO['illumination_state'] = res;
+			self.checkVariables();
+			self.checkFeedbacks();
+		});
+		self.sendCommand("property.get", { "property": "firmware.firmwareversion" }, function(err, res) {
+			self.INFO['firmware_version'] = res;
+			self.checkVariables();
+			self.checkFeedbacks();
+		});
+
+		self.sendCommand("property.get", { "property": "system.serialnumber" }, function(err, res) {
+			self.INFO['serial_number'] = res;
+			self.checkVariables();
+			self.checkFeedbacks();
+		});
+
+		/* Laser Power */
+		self.sendCommand("property.get", { "property": "illumination.sources.laser.power" }, function(err, res) {
+			self.INFO['illumination_value'] = res;
 			self.checkVariables();
 			self.checkFeedbacks();
 		});
