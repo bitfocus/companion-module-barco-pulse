@@ -8,8 +8,8 @@ module.exports = {
 		variables.push({ variableId: 'illumination_value', name: 'Illumination Value' });
 		variables.push({ variableId: 'shutter_position', name: 'Shutter State' });
 
-//		variables.push({ variableId: 'identification_family', name: 'Identification Family' });
-//		variables.push({ variableId: 'identification', name: 'Identification' });
+		variables.push({ variableId: 'identification_family', name: 'Identification Family' });
+		variables.push({ variableId: 'identification', name: 'Identification' });
 		variables.push({ variableId: 'serial_number', name: 'Serial Number' });
 		variables.push({ variableId: 'firmware_version', name: 'Firmware Version' });
 
@@ -39,8 +39,8 @@ module.exports = {
 			}
 
 			if ('identification' in self.INFO) {
-//				variableObj['identification_family'] = self.INFO['identification']['IdentificationFamily'];
-//				variableObj['identification'] = self.INFO['identification']['Identification'];
+				variableObj['identification_family'] = self.INFO['identification_family'];
+				variableObj['identification'] = self.INFO['identification'];
 				variableObj['serial_number'] = self.INFO['serial_number'];
 				variableObj['firmware_version'] = self.INFO['firmware_version'];
 			}
