@@ -3,7 +3,7 @@
 	"name": "barco-pulse",
 	"shortname": "pulse",
 	"description": "Barcos Pulse Platform",
-	"version": "0.0.0",
+	"version": "2.3.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-barco-pulse.git",
 	"bugs": "https://github.com/bitfocus/companion-module-barco-pulse/issues",
