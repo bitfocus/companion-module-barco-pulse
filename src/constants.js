@@ -17,6 +17,12 @@ module.exports = {
 	LIST_input: [
 		{ id: 'L1 HDMI',				label: 'HDMI' },
 		{ id: 'L1 Displayport',	label: 'Displayport' },
+		{id:"L1 SDI A",label:"L1 SDI A"},
+		{id:"L1 SDI B",label:"L1 SDI B"},
+		{id:"L1 SDI C",label:"L1 SDI C"},
+		{id:"L1 SDI D",label:"L1 SDI D"},
+		{id:"L1 HDBaseT 1",label:"L1 HDBaseT 1"},
+		{id:"L1 HDBaseT 2",label:"L1 HDBaseT 2"}
 	],
 	
 	LIST_shutter: [
